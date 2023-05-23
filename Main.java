@@ -4,18 +4,17 @@ public class Main {
     public static void main(String[] args) throws MPIException {
         MPI.Init(args);
 
-        int rank = MPI.COMM_WORLD.getRank();
-        int size = MPI.COMM_WORLD.getSize();
+        int rank = MPI.COMM_WORLD.Rank();
+        int size = MPI.COMM_WORLD.Size();
 
-        if (rank >= size - 1) {
-            Receiver receiver = new Receiver();
-            receiver.receive();
+        if (rank == 0) {
+            MasterProcess master = new MasterProcess(size - 1);
+            master.calculatePi();
         } else {
-            Emitter emitter = new Emitter();
-            emitter.sendValues();
+            WorkerProcess worker = new WorkerProcess();
+            worker.performMonteCarloSimulation();
         }
 
         MPI.Finalize();
     }
 }
-
